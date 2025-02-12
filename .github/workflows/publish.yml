@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set Node.js 14
+    - name: Set Node.js 16
       uses: actions/setup-node@v2.4.1
       with:
-        node-version: 14
+        node-version: 18.x  # Use a newer version like 16.x or 18.x
     - name: Cache node_modules
       uses: actions/cache@v2
       with:
@@ -40,7 +40,7 @@ jobs:
     - name: Set Node.js 14
       uses: actions/setup-node@v2.4.1
       with:
-        node-version: 14
+        node-version: 18.x
     - name: Cache node_modules
       uses: actions/cache@v2
       with:

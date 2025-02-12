@@ -13,7 +13,7 @@ const purgecss = require('postcss-purgecss')({
 
 module.exports = {
   plugins: [
-    require('tailwindcss'),
+    require('@tailwindcss/postcss'), // Update to use the correct PostCSS plugin
     require('autoprefixer'),
     ...(process.env.NODE_ENV === 'production' ? [purgecss] : []),
   ],

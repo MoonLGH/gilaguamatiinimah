@@ -23,7 +23,7 @@
         <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Login Nominasi Graduation</h2>
         <form id="loginForm" class="space-y-4">
             <div>
-                <label for="nisn" class="block text-gray-700 font-medium">NISN</label>
+                <label for="nisn" class="block text-gray-700 font-medium">Nama Lengkap (Huruf kapital di perhatikan, ikuti instruksi!)</label>
                 <input type="text" id="nisn" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             </div>
             <div>
@@ -39,18 +39,18 @@
             const nisn = document.getElementById('nisn').value;
             const password = document.getElementById('password').value;
             
-            fetch('http://localhost:5000/api/login', {
+            fetch('https://ubiquitous-space-giggle-wjv54v7w573vjx9-5000.app.github.dev/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nisn, password })
+                body: JSON.stringify({ nama:nisn, password })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     localStorage.setItem('token', data.token);
-                    window.location.href = 'nominasi.html';
+                    window.location.href = '/';
                 } else {
-                    alert('Login gagal! Periksa kembali NISN dan password.');
+                    alert('Login gagal! Periksa kembali NAMA dan password.');
                 }
             })
             .catch(error => console.error('Error:', error));

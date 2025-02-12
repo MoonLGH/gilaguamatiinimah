@@ -5,87 +5,138 @@
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>SMAN 1 CIKAMPEK - ABSEN</title>
+   <title>SMAN 1 CIKAMPEK - Nominasi</title>
    <link rel="stylesheet" href="./assets/css/main.css">
    <link rel="shortcut icon" href="./assets/img/Logosaci.png" type="image/x-icon">
    <script src="../node_modules/flowbite/dist/flowbite.js"></script>
    <script src="./assets/js/index.js" defer></script>
    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Francois+One&display=swap" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-</head>
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Francois+One&display=swap" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
+   <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    try {
+        const response = await fetch("https://ubiquitous-space-giggle-wjv54v7w573vjx9-5000.app.github.dev/api/user", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token }),
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            localStorage.removeItem("token"); // Hapus token jika tidak valid
+            window.location.href = "login.html"; // Redirect ke login
+            return;
+        }
+
+        document.getElementById("welcomeMessage").textContent = `Halo selamat datang, ${data.nama}`;
+
+        if (data.hasVoted) {
+            window.location.href = "SudahMemilih.html";
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        localStorage.removeItem("token"); // Hapus token jika ada error
+        window.location.href = "login.html"; // Redirect ke login
+    }
+});
+   </script>
+</head>
 
 <body class="flex items-center justify-center min-h-screen bg-gray-100">
     <div class="w-full max-w-lg p-8 bg-white shadow-lg rounded-lg">
+        <h2 id="welcomeMessage" class="text-xl font-semibold text-center text-gray-800 mb-4"></h2>
         <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Pilih Nominasi</h2>
-        <form id="nominationForm" class="space-y-4">
+        <form id="funniestForm" class="space-y-4">
+            <h3 class="text-lg font-medium">Kategori Terlucu</h3>
             <div>
-                <label for="category" class="block text-gray-700 font-medium">Kategori</label>
-                <select id="category" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                    <option value="">Pilih Kategori</option>
-                    <option value="terlucu">Terlucu</option>
-                    <option value="terpopuler">Terpopuler</option>
-                </select>
+                <label for="funniestClass" class="block text-gray-700 font-medium">Kelas</label>
+                <select id="funniestClass" class="w-full px-4 py-2 border rounded-lg" required></select>
             </div>
             <div>
-                <label for="class" class="block text-gray-700 font-medium">Kelas</label>
-                <select id="class" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                    <option value="">Pilih Kelas</option>
-                </select>
+                <label for="funniestName" class="block text-gray-700 font-medium">Nama</label>
+                <select id="funniestName" class="w-full px-4 py-2 border rounded-lg" required></select>
+            </div>
+        </form>
+        
+        <form id="popularForm" class="space-y-4 mt-6">
+            <h3 class="text-lg font-medium">Kategori Terfavorite</h3>
+            <div>
+                <label for="popularClass" class="block text-gray-700 font-medium">Kelas</label>
+                <select id="popularClass" class="w-full px-4 py-2 border rounded-lg" required></select>
             </div>
             <div>
-                <label for="name" class="block text-gray-700 font-medium">Nama</label>
-                <select id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                    <option value="">Pilih Nama</option>
-                </select>
+                <label for="popularName" class="block text-gray-700 font-medium">Nama</label>
+                <select id="popularName" class="w-full px-4 py-2 border rounded-lg" required></select>
             </div>
             <button type="submit" class="w-full py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700">Submit</button>
         </form>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('http://localhost:5000/api/all')
+            fetch('https://ubiquitous-space-giggle-wjv54v7w573vjx9-5000.app.github.dev/api/all')
                 .then(response => response.json())
                 .then(data => {
-                    const classSelect = document.getElementById('class');
-                    const nameSelect = document.getElementById('name');
-                    
-                    const classes = [...new Set(data.map(item => item.kelas))];
-                    classes.forEach(kelas => {
-                        let option = document.createElement('option');
-                        option.value = kelas;
-                        option.textContent = kelas;
-                        classSelect.appendChild(option);
-                    });
-                    
-                    classSelect.addEventListener('change', function() {
+                    const updateOptions = (classSelect, nameSelect) => {
+                        classSelect.innerHTML = '<option value="">Pilih Kelas</option>';
                         nameSelect.innerHTML = '<option value="">Pilih Nama</option>';
-                        const selectedClass = this.value;
-                        const filteredNames = data.filter(item => item.kelas === selectedClass);
-                        filteredNames.forEach(item => {
+                        const classes = [...new Set(data.map(item => item.kelas))];
+                        classes.forEach(kelas => {
                             let option = document.createElement('option');
-                            option.value = item.nama;
-                            option.textContent = item.nama;
-                            nameSelect.appendChild(option);
+                            option.value = kelas;
+                            option.textContent = "XII " + kelas;
+                            classSelect.appendChild(option);
                         });
-                    });
+                        classSelect.addEventListener('change', function() {
+                            nameSelect.innerHTML = '<option value="">Pilih Nama</option>';
+                            const selectedClass = this.value;
+                            const filteredNames = data.filter(item => item.kelas === selectedClass);
+                            filteredNames.forEach(item => {
+                                let option = document.createElement('option');
+                                option.value = item.nama;
+                                option.textContent = item.nama;
+                                nameSelect.appendChild(option);
+                            });
+                        });
+                    };
+                    updateOptions(document.getElementById('funniestClass'), document.getElementById('funniestName'));
+                    updateOptions(document.getElementById('popularClass'), document.getElementById('popularName'));
                 });
         });
 
-        document.getElementById('nominationForm').addEventListener('submit', function(event) {
+        document.getElementById('popularForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            const category = document.getElementById('category').value;
-            const kelas = document.getElementById('class').value;
-            const name = document.getElementById('name').value;
-            
-            fetch('http://localhost:5000/api/nominate', {
+            const funniestClass = document.getElementById('funniestClass').value;
+            const funniestName = document.getElementById('funniestName').value;
+            const popularClass = document.getElementById('popularClass').value;
+            const popularName = document.getElementById('popularName').value;
+            const token = localStorage.getItem('token');
+
+            if (!funniestClass || !funniestName || !popularClass || !popularName) {
+                alert('Harap pilih semua nominasi sebelum mengirim.');
+                return;
+            }
+
+            fetch('https://ubiquitous-space-giggle-wjv54v7w573vjx9-5000.app.github.dev/api/nominate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ category, kelas, name })
+                body: JSON.stringify({
+                    token: token,
+                    nominations: [
+                        { kategori: 'funniest', kelas: funniestClass, nama: funniestName },
+                        { kategori: 'popular', kelas: popularClass, nama: popularName }
+                    ]
+                })
             })
             .then(response => response.json())
             .then(data => {
@@ -99,33 +150,4 @@
         });
     </script>
 </body>
-
-<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-<script>
-    var swiper = new Swiper('.swiper-container', {
-        slidesPerView: 1,
-        spaceBetween: 10,
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-        breakpoints: {
-            640: {
-                slidesPerView: 2,
-                spaceBetween: 20,
-            },
-            768: {
-                slidesPerView: 3,
-                spaceBetween: 30,
-            },
-            1024: {
-                slidesPerView: 4,
-                spaceBetween: 40,
-            },
-        },
-    });
-</script>
-<!-- PLACEHOLDER -->
-
-
 </html>
